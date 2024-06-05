@@ -1,48 +1,37 @@
 from pydantic import BaseModel
 
 class PostItemBase(BaseModel):
-  item : str | None = None
+  text : str | None = None
+  post_id: int
 
 class PostItemCreate(PostItemBase):
   pass
 
 class PostItem(PostItemBase):
   id: int 
-  post_id: int
 
   class Config:
     orm_mode = True
 
 class PostBase(BaseModel):
+  owner_id: int
   pass
 
 class PostCreate(PostBase):
+  post_texts : list[str] = []
   pass
 
 class Post(PostBase):
-
   id: int
-  owner_id: int
   items: list[PostItem] = []
   
   class Config:
     orm_mode = True
 
-class SubscriberBase(BaseModel):
-  pass
-
-class SubscriberCreate(SubscriberBase):
-  pass
-
-class Subscriber(SubscriberBase):
-  subscription_id : int
-  subscriber_id : int
-  
-  class Config:
-    orm_mode =True
 
 
 class UserBase(BaseModel):
+  username: str
   email: str
 
 class UserCreate(UserBase):
@@ -52,8 +41,7 @@ class User(UserBase):
   id: int
   username: str
   is_active: bool
-  posts = list[Post] = []
-  subscribers = list[Subscriber] = []
+  posts : list[Post] = []
 
   class Config:
     orm_mode = True

@@ -1,8 +1,10 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from typing import List
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, UniqueConstraint, Table
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.schema import PrimaryKeyConstraint
 
 from .database import Base
+
 
 class User(Base):
 
@@ -11,11 +13,10 @@ class User(Base):
   id = Column(Integer, primary_key=True)
   username = Column(String, unique=True)
   email = Column(String,unique=True,index=True)
-  hashed_password= Column(String)
+  hashed_password= Column(String(255))
   is_active= Column(Boolean, default=True)
 
   posts = relationship("Post", back_populates="owner")
-  subscriptions = relationship("User", back_populates="subscribers")
 
 class Post(Base):
 
@@ -33,21 +34,6 @@ class PostItem(Base):
 
   id= Column(Integer, primary_key=True)
   post_id = Column(Integer, ForeignKey("posts.id"))
-  item = Column(String, max_length=255)
+  text = Column(String(255))
 
   containing_post = relationship(Post, back_populates="items")
-
-class Subscription(Base):
-
-  __tablename__ = "subscriptions"
-
-  subscription_id = Column(Integer, ForeignKey("user.id")) # user who is being followed
-  subscriber_id = Column(Integer, ForeignKey("user.id")) # the following user
-  
-  subcribers = relationship("User", back_populates="subscriptions")
-
-  __table_args__ = (
-    PrimaryKeyConstraint('subscription_id','subscriber_id')
-  )
-  
-
