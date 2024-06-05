@@ -1,4 +1,6 @@
+from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -7,6 +9,13 @@ from .database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@app.get("/items/")
+def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+  return {'token': token}
+
 
 def get_db():
   db = SessionLocal()
@@ -35,17 +44,15 @@ def read_user(user_id : int, db : Session = Depends(get_db)):
     raise HTTPException(status_code = 404, detail = "User not found")
   return db_user
 
-@app.get("users/{user_id}/posts", response_model = list[schemas.Post])
+@app.get("/users/{user_id}/posts", response_model = list[schemas.Post])
 def read_post_by_author(user_id:int, db :Session = Depends(get_db)):
   db_posts = crud.get_posts_by_author(db, owner_id = user_id)
   return db_posts
 
-""" TO DO
-@app.get("users/{user_id}/post-items", response_model = list[schemas.PostItem])
+@app.get("/users/{user_id}/post-items", response_model = list[str])
 def read_post_items_by_author(user_id:int, db :Session = Depends(get_db)):
   db_post_items = crud.get_post_items_by_author(db, owner_id = user_id)
   return db_post_items
-"""
 
 
 @app.get("/posts/{post_id}", response_model=schemas.Post)
@@ -64,7 +71,3 @@ def create_post(post :schemas.PostCreate, db : Session = Depends(get_db)):
     crud.create_post_item(db,post_item_schema )
   return db_post
 
-"""
-@app.get("/users/{user_id}/subscriptions", response_model={list[int], list[int]})
-def get_subscriptions_by_user(user_id : int, db : Session = Depends(get_db):
-  """
