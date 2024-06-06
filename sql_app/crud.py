@@ -5,6 +5,9 @@ from . import models, schemas
 def get_user(db : Session, user_id : int):
   return db.query(models.User).filter(models.User.id == user_id).first()
 
+def get_user_by_username(db: Session, username: str):
+  return db.query(models.User).filter(models.User.username == username).first()
+
 def get_user_by_email(db: Session, email: str):
   return db.query(models.User).filter(models.User.email == email).first()
 
@@ -19,19 +22,36 @@ def create_user(db : Session, user: schemas.UserCreate):
   db.refresh(db_user)
   return db_user
 
-def get_post(db:Session, post_id: int):
-  return db.query(models.Post).filter(models.Post.id == post_id).first()
 
-def get_posts_by_author(db:Session, owner_id: int):
-  return db.query(models.Post).filter(models.Post.owner_id == owner_id).all()
+def get_public_post(db:Session, user_id:int,post_id: int):
+  stmt = select(models.Post).where(models.Post.owner_id == user_id).where(models.Post.id == post_id).where(models.Post.public == True)
+  db_post = db.execute(stmt).first()
 
-def get_post_items_by_author(db:Session, owner_id: int):
+  return  None if db_post is None else db_post[0]
+
+def get_any_post(db:Session, post_id: int, requesting_id : int):
+  stmt = select(models.Post).where(models.Post.owner_id == requesting_id).where(models.Post.id == post_id)
+  db_post = db.execute(stmt).first()
+  return  None if db_post is None else db_post[0]
+
+def get_public_posts_by_author(db:Session, owner_id: int):
+  stmt = select(models.Post).where(models.Post.owner_id == owner_id).where(models.Post.public == True)
+  return db.scalars(stmt).all()
+
+def get_all_posts_by_author(db:Session, owner_id: int,):
+  stmt = select(models.Post).where(models.Post.owner_id == owner_id)
+  return db.scalars(stmt).all()
+
+def get_public_post_items_by_author(db:Session, owner_id: int):
+  stmt = select(models.PostItem.text).where(models.Post.owner_id == owner_id).where(models.Post.public == True).where(models.PostItem.post_id == models.Post.id)
+  return db.scalars(stmt).all()
+
+def get_all_post_items_by_author(db:Session, owner_id: int):
   stmt = select(models.PostItem.text).where(models.Post.owner_id == owner_id).where(models.PostItem.post_id == models.Post.id)
   return db.scalars(stmt).all()
 
-
 def create_post(db:Session, post : schemas.PostCreate):
-  db_post = models.Post(owner_id = post.owner_id)
+  db_post = models.Post(owner_id = post.owner_id, public = post.public)
   db.add(db_post)
   db.commit()
   db.refresh(db_post)

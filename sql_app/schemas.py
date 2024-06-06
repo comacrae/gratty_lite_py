@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Union
 
 class PostItemBase(BaseModel):
   text : str | None = None
@@ -15,11 +16,10 @@ class PostItem(PostItemBase):
 
 class PostBase(BaseModel):
   owner_id: int
-  pass
+  public: bool = False
 
 class PostCreate(PostBase):
   post_texts : list[str] = []
-  pass
 
 class Post(PostBase):
   id: int
@@ -27,7 +27,6 @@ class Post(PostBase):
   
   class Config:
     orm_mode = True
-
 
 
 class UserBase(BaseModel):
@@ -40,11 +39,22 @@ class UserCreate(UserBase):
 class User(UserBase):
   id: int
   username: str
-  is_active: bool
+  disabled: bool
   posts : list[Post] = []
 
   class Config:
     orm_mode = True
+
+class UserPublic(BaseModel):
+  id: int
+  username: str
+
+class Token(BaseModel):
+  access_token: str
+  token_type: str
+
+class TokenData(BaseModel):
+  username : Union[str,None] = None
 
 
 
