@@ -19,7 +19,7 @@ def read_auth_config(file_path:str = "C:\\Users\\comac\\gratty_lite_py\\app\\sec
 SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES = read_auth_config()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 def verify_password(plain_password : str, hashed_password : str):
   return pwd_context.verify(plain_password, hashed_password)

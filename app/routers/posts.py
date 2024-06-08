@@ -42,5 +42,5 @@ def create_post(post :schemas.PostCreate, current_user : Annotated[schemas.User,
   db_post = database.posts.create_post(db,post)
   for post_text in post.post_texts:
     post_item_schema = schemas.PostItemCreate(text=post_text, post_id=db_post.id)
-    database.posts.create_post_item(db,post_item_schema )
+    database.post_items.create_post_item(db,post_item_schema )
   return db_post
