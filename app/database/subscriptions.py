@@ -14,6 +14,8 @@ def read_following(db:Session, user_id:int, skip:int= 0,limit:int = 100):
 def create_following(db:Session, follower_id: int, followed_id:int):
   db_following_user: models.User = get_user(db, follower_id)
   db_followed_user:models.User = get_user(db,followed_id)
+  if db_followed_user in db_following_user.following:
+    return None
   db_following_user.following.append(db_followed_user)
   db.commit()
   db.refresh(db_following_user)

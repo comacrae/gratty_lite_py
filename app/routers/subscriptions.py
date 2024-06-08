@@ -40,4 +40,6 @@ def read_following_by_user_id( user_id:int, db :Session = Depends(database.get_d
 @router.get("/follow/user/{user_id}", response_model= list[schemas.UserPublic])
 def create_follow_me(user_id:int,current_user : Annotated[schemas.User, Depends(get_current_active_user)], db:Session = Depends(database.get_db)):
   following_user = database.subscriptions.create_following(db, follower_id=current_user.id, followed_id=user_id)
+  if following_user is None:
+    raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail="User is already followed")
   return following_user.following
