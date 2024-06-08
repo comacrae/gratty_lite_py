@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from post_item import PostItem
+from .post_item import PostItem
 
 class PostBase(BaseModel):
   owner_id: int
@@ -13,4 +13,4 @@ class Post(PostBase):
   items: list[PostItem] = []
   
   class Config:
-    orm_mode = True
+    from_attributes = True

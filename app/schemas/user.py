@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from post import Post
+from .post import Post
 
 class UserBase(BaseModel):
   username: str
@@ -15,7 +15,7 @@ class User(UserBase):
   posts : list[Post] = []
 
   class Config:
-    orm_mode = True
+    from_attributes = True # used to be orm_mode
 
 class UserPublic(BaseModel):
   id: int
