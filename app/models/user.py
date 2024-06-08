@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
 
@@ -16,3 +16,16 @@ class User(Base):
   disabled= Column(Boolean, default=False)
 
   posts = relationship("Post", back_populates="owner")
+
+  following = relationship(
+        'User', lambda: user_following,
+        primaryjoin=lambda: User.id == user_following.c.user_id,
+        secondaryjoin=lambda: User.id == user_following.c.following_id,
+        backref='followers'
+    )
+
+user_following = Table(
+  'user_following', Base.metadata,
+  Column('user_id', Integer, ForeignKey(User.id), primary_key=True),
+  Column('following_id', Integer, ForeignKey(User.id), primary_key=True)
+)
