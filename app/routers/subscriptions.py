@@ -8,38 +8,49 @@ router = APIRouter(prefix="/subscriptions")
 
 @router.get("/followers/user/me", response_model = list[schemas.UserPublic])
 def read_followers_me( current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
-  db_followers = database.subscriptions.read_followers(db=db, user_id=current_user.id, skip=skip, limit=limit)
-  if db_followers is None:
+  db_user = database.users.get_user(db, user_id=current_user.id)
+  if db_user is None:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
-  return db_followers
+  return db_user.followers
 
 @router.get("/following/user/me", response_model = list[schemas.UserPublic])
 def read_following_me( current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
-  db_followers = database.subscriptions.read_following(db=db, user_id=current_user.id, skip=skip, limit=limit)
-  if db_followers is None:
+  db_user = database.users.get_user(db, user_id=current_user.id)
+  if db_user is None:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
-  return db_followers
+  return db_user.following
 
 @router.get("/followers/user/{user_id}", response_model = list[schemas.UserPublic])
 def read_followers_by_user_id( user_id:int, db :Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
-  db_followers = database.subscriptions.read_followers(db=db, user_id=user_id, skip=skip, limit=limit)
-  if db_followers is None:
+  db_user = database.users.get_user(db, user_id=user_id)
+  if db_user is None:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
-  return db_followers
+  return db_user.followers
 
 
 @router.get("/following/user/{user_id}", response_model = list[schemas.UserPublic])
 def read_following_by_user_id( user_id:int, db :Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
-  db_followers = database.subscriptions.read_following(db=db, user_id=user_id, skip=skip, limit=limit)
-  if db_followers is None:
+  db_user = database.users.get_user(db, user_id=user_id)
+  if db_user is None:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
-  return db_followers
+  return db_user.following
 
 
 
-@router.get("/follow/user/{user_id}", response_model= list[schemas.UserPublic])
+@router.put("/follow/user/{user_id}", response_model= list[schemas.UserPublic])
 def create_follow_me(user_id:int,current_user : Annotated[schemas.User, Depends(get_current_active_user)], db:Session = Depends(database.get_db)):
+  if user_id == current_user.id:
+    raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail="User cannot self-follow")
   following_user = database.subscriptions.create_following(db, follower_id=current_user.id, followed_id=user_id)
   if following_user is None:
     raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail="User is already followed")
+  return following_user.following
+
+@router.delete("/unfollow/user/{user_id}", response_model= list[schemas.UserPublic])
+def delete_follow_me(user_id:int,current_user : Annotated[schemas.User, Depends(get_current_active_user)], db:Session = Depends(database.get_db)):
+  if user_id == current_user.id:
+    raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail="User cannot self-follow")
+  following_user = database.subscriptions.delete_following(db, follower_id=current_user.id, followed_id=user_id)
+  if following_user is None:
+    raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail="User is not followed")
   return following_user.following
