@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from .. import models, schemas
-
+from .post_items import create_post_item
 
 def get_public_post(db:Session,post_id: int):
   stmt = select(models.Post).where(models.Post.id == post_id).where(models.Post.public == True)
@@ -25,6 +25,15 @@ def get_all_posts_by_author(db:Session, owner_id: int, skip: int = 0, limit:int 
 def create_post(db:Session, post : schemas.PostCreate):
   db_post = models.Post(owner_id = post.owner_id, public = post.public)
   db.add(db_post)
+  db.commit()
+  db.refresh(db_post)
+  return db_post
+
+def update_post(db:Session, post_id:int, requesting_id: int, post_item : schemas.PostItemCreate):
+  db_post : models.Post = get_any_post(db,post_id, requesting_id)
+  if db_post is None:
+    return None
+  db_post.items.append(create_post_item(db, post_item))
   db.commit()
   db.refresh(db_post)
   return db_post

@@ -7,6 +7,9 @@ class PostItemBase(BaseModel):
 class PostItemCreate(PostItemBase):
   pass
 
+class PostItemUpdate(BaseModel):
+  text : str | None = None
+
 class PostItem(PostItemBase):
   id: int 
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException,status
 from typing import Annotated
 from ..security import get_current_active_user
-from .. import schemas, database
+from .. import schemas, database, models
 
 from sqlalchemy.orm import Session
 
@@ -23,6 +23,13 @@ def read_posts_me( current_user : Annotated[schemas.User, Depends(get_current_ac
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
   return db_posts
 
+@router.get("/user/me/{post_id}", response_model = list[schemas.Post])
+def read_posts_me( post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db)):
+  db_post = database.posts.get_any_post(db=db,post_id=post_id, requesting_id = current_user.id )
+  if db_post is None:
+    raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post not found")
+  return db_post
+
 @router.get("/user/{user_id}", response_model = list[schemas.Post])
 def read_posts_by_author( user_id:int, db :Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
   db_user = database.users.get_user(db, user_id)
@@ -41,6 +48,14 @@ def create_post(post :schemas.PostCreate, current_user : Annotated[schemas.User,
   for post_text in post.post_texts:
     post_item_schema = schemas.PostItemCreate(text=post_text, post_id=db_post.id)
     database.post_items.create_post_item(db,post_item_schema )
+  return db_post
+
+@router.put("/update/{post_id}", response_model=schemas.Post)
+def update_post(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], new_post_item: schemas.PostItemUpdate, db : Session = Depends(database.get_db)):
+  db_post_item: schemas.PostItemCreate = schemas.PostItemCreate(text=new_post_item.text, post_id=post_id)
+  db_post : models.Post = database.posts.update_post(db,post_id, requesting_id=current_user.id, post_item=db_post_item)
+  if db_post is None:
+    raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post not found")
   return db_post
 
 @router.delete("/delete/{post_id}")
