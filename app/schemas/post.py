@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, PastDatetime
 from .post_item import PostItem
 
 class PostBase(BaseModel):
@@ -11,6 +11,7 @@ class PostCreate(PostBase):
 class Post(PostBase):
   id: int
   items: list[PostItem] = []
+  #created_date: PastDatetime
   
   class Config:
     from_attributes = True

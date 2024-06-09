@@ -24,7 +24,7 @@ def read_user(user_id : int, db : Session = Depends(database.get_db)):
     raise HTTPException(status_code = 404, detail = "User not found")
   return db_user
 
-@router.post("", response_model=schemas.User)
+@router.post("/register", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     db_user = database.users.get_user_by_email(db, email=user.email)
     if db_user:

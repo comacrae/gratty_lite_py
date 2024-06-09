@@ -1,5 +1,6 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer
+from sqlalchemy import Boolean, Column, ForeignKey, Integer,DateTime
 from sqlalchemy.orm import relationship
+import datetime
 
 
 from ..database import Base
@@ -14,3 +15,4 @@ class Post(Base):
 
   owner = relationship("User", back_populates="posts")
   items  = relationship("PostItem", back_populates="containing_post")
+  #created_date = Column(DateTime, default=datetime.datetime.now)
