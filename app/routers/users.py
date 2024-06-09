@@ -36,3 +36,10 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     
     user.password = get_password_hash(user.password)
     return database.users.create_user(db=db, user=user)
+
+@router.delete("/delete")
+def delete_user_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):
+  if database.users.delete_user(db, current_user.id):
+    return True
+  else:
+    return False

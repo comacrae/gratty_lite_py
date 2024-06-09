@@ -29,3 +29,11 @@ def create_post(db:Session, post : schemas.PostCreate):
   db.refresh(db_post)
   return db_post
 
+def delete_post(db:Session, post_id:int, requesting_id:int):
+  db_post = get_any_post(db, post_id,requesting_id)
+  if db_post is None:
+    return None
+  db.delete(db_post)
+  db.commit()
+  return True
+

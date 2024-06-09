@@ -34,8 +34,6 @@ def read_posts_by_author( user_id:int, db :Session = Depends(database.get_db), s
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
   return db_posts
 
-
-
 @router.post("/user/me",response_model=schemas.Post)
 def create_post(post :schemas.PostCreate, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):
   post.owner_id = current_user.id
@@ -44,3 +42,10 @@ def create_post(post :schemas.PostCreate, current_user : Annotated[schemas.User,
     post_item_schema = schemas.PostItemCreate(text=post_text, post_id=db_post.id)
     database.post_items.create_post_item(db,post_item_schema )
   return db_post
+
+@router.delete("/delete/{post_id}")
+def read_posts_me(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db)):
+  if database.posts.delete_post(db, post_id, current_user.id):
+    return {}
+  else:
+    raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post not found")

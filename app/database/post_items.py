@@ -1,6 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from .. import models, schemas
+from .posts import get_any_post
+
+def get_post_item_by_id(db:Session, post_item_id:int):
+  stmt = select(models.post_item.PostItem).where(models.post_item.PostItem.id == post_item_id)
+  return db.execute(stmt).first()
 
 def get_public_post_items_by_author(db:Session, owner_id: int, skip: int = 0, limit:int = 100):
   stmt = select(models.PostItem.text).where(models.Post.owner_id == owner_id).where(models.Post.public == True).where(models.PostItem.post_id == models.Post.id).offset(skip).limit(limit)
@@ -16,3 +21,11 @@ def create_post_item(db:Session, post_item : schemas.PostItemCreate):
   db.commit()
   db.refresh(db_post_item)
   return db_post_item
+
+def delete_post_item(db:Session, post_item_id:int, requesting_id:int):
+  db_post_item : models.post_item.PostItem = get_post_item_by_id(db, post_item_id)
+  db_post : models.post.Post = get_any_post(db, db_post_item.post_id, requesting_id)
+  db.delete(db_post_item)
+  db.commit()
+  db.refresh(db_post)
+  return db_post

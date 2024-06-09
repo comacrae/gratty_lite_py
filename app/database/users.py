@@ -21,3 +21,12 @@ def create_user(db : Session, user: schemas.UserCreate):
   db.commit()
   db.refresh(db_user)
   return db_user
+
+def delete_user(db: Session, user_id: int):
+  db_user = get_user(db, user_id)
+  if db_user is None:
+    return None
+  db.delete(db_user)
+  db.commit()
+  return True
+ 
