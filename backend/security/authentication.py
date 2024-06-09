@@ -11,7 +11,7 @@ import json
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 
-def read_auth_config(file_path:str = "C:\\Users\\comac\\gratty_lite_py\\app\\security\\auth_config.json"):
+def read_auth_config(file_path:str = "./backend/security/auth_config.json"):
   cfg : dict = json.load(open(file_path, "r"))
   return cfg.values()
 SECRET_KEY, SECRET_REFRESH_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES ,REFRESH_ACCESS_TOKEN_EXPIRE_MINUTES = read_auth_config()
