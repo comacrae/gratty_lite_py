@@ -1,5 +1,5 @@
 "use client";
-import { queryApi } from "./actions";
+import { attemptLogin } from "./actions";
 import { useFormStatus, useFormState } from "react-dom";
 
 const initialState = { message: "" };
@@ -14,7 +14,7 @@ function SubmitButton() {
 }
 
 export default function Form() {
-  const [state, formAction] = useFormState(queryApi, initialState);
+  const [state, formAction] = useFormState(attemptLogin, initialState);
   return (
     <form action={formAction}>
       <label htmlFor="username">Username</label>
