@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from .. import schemas, database
-from ..security import get_current_active_user, get_password_hash
+from ..security import get_current_active_user
 
 from sqlalchemy.orm import Session
 
@@ -34,7 +34,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     
-    user.password = get_password_hash(user.password)
+    user.password = ""
     return database.users.create_user(db=db, user=user)
 
 @router.delete("/delete")
