@@ -1,12 +1,45 @@
 "use server";
+import crypto from "crypto";
+
+type AuthToken = {
+  access_token: string;
+  refresh_token: string;
+};
+import { cookies } from "next/headers";
+
+export async function getSessionData() {
+  const sessionData = cookies().get("token")?.value;
+  if (!sessionData) return null;
+  const token: AuthToken = JSON.parse(sessionData);
+  return token;
+}
+
+export async function setSessionData(token: AuthToken) {
+  const tokenStr: string = JSON.stringify(token);
+  try {
+    await cookies().set("token", tokenStr, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // One week
+      path: "/",
+    });
+  } catch (e) {
+    throw e;
+  }
+  return true;
+  // Redirect or handle the response after setting the cookie
+}
 
 export async function attemptLogin(previousState: any, formData: FormData) {
   const username = formData.get("username")?.toString();
   const password = formData.get("username")?.toString();
   const params = new URLSearchParams();
 
-  // check that username is defined and not empty
+  let token: AuthToken | null = await getSessionData();
+  // check if logged in already
+  if (token != null) return { message: "already logged in" };
   if (typeof username != "undefined" && username.length > 0) {
+    // check that username is defined and not empty
     params.set("username", username);
   } else {
     throw Error("Username cannot be empty");
@@ -34,7 +67,12 @@ export async function attemptLogin(previousState: any, formData: FormData) {
     .then(function (data) {
       const responseMsg = { message: "" };
       if ("access_token" in data) {
-        responseMsg.message = data.access_token;
+        let token: AuthToken = {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        };
+        setSessionData(token);
+        responseMsg.message = "Set Token;Logged in";
       } else if ("detail" in data) {
         responseMsg.message = data.detail;
       } else {

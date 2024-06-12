@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 from .. import models, schemas
 
@@ -30,3 +30,10 @@ def update_token_by_access_token_and_username(username:str, access_token:str, db
     return existing_token
   else:
     return None
+
+
+def delete_all_tokens(db:Session):
+  stmt = delete(models.Token)
+  db.execute(stmt)
+  db.commit()
+  return True

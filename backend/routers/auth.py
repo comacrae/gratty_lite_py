@@ -12,8 +12,12 @@ database.Base.metadata.create_all(bind=database.engine)
 
 router = APIRouter(prefix="/auth")
 @router.get("/tokens", response_model=list[schemas.token.TokenCreate])
-def get_tokens(db:Session = Depends(database.get_db)):
+def read_tokens(db:Session = Depends(database.get_db)):
   return database.tokens.read_tokens(db)
+
+@router.delete("/tokens", response_model = bool)
+def delete_tokens(db:Session = Depends(database.get_db)):
+  return database.tokens.delete_all_tokens(db)
 
 
 @router.post("/login")
