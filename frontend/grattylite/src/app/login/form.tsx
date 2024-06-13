@@ -1,5 +1,4 @@
 "use client";
-import { attemptLogin } from "./actions";
 import { useFormStatus, useFormState } from "react-dom";
 
 const initialState = { message: "" };
