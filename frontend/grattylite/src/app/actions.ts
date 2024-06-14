@@ -1,12 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
-const fastApiUrl = process.env.FASTAPI_KEY;
-export async function GET(req: Request) {
-  const api_url: string = req.url.split("api")[1];
-  console.log(api_url);
-  const result = await fetch(fastApiUrl + api_url, { method: "GET" })
+import { redirect } from "next/navigation";
+import { auth } from "@/app/auth";
+import { headers } from "next/headers";
+const fastApiUrl = process.env.FASTAPI_URL;
+
+export async function fastApiGet(apiRequest: string) {
+  // This function is a general GET for FASTAPI url
+  const session = await auth();
+
+  if (session == null || !session?.user) redirect("/");
+
+  const result = await fetch(fastApiUrl + apiRequest, {
+    method: "GET",
+    headers: headers(),
+  })
     .then(function (res: Response) {
       if (!res.ok) {
-        throw new Error("Failed GET request to api: " + api_url);
+        throw new Error("Failed GET request to api: " + apiRequest);
       }
       return res.json();
     })

@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, Request
 from .database import engine, Base
 from .internal import admin
 from .routers import users, posts, post_items, subscriptions
-from .security import JWT
+from .security import jwt_wrapper
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 
@@ -21,12 +21,8 @@ app.include_router(posts.router)
 app.include_router(post_items.router)
 app.include_router(subscriptions.router)
 
-
-
-
-
 @app.get("/")
-async def return_jwt(jwt : Annotated[dict, Depends(JWT)]):
+async def return_jwt(jwt : Annotated[dict, Depends(jwt_wrapper)]):
   return jwt
 
     

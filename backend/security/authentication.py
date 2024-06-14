@@ -18,7 +18,7 @@ os.environ["NEXTAUTH_URL"] = "http://127.0.0.1:3000"
 JWT = NextAuthJWT(secret='test',csrf_prevention_enabled=False )
 
 async def jwt_wrapper(req: Request):
-  missing_token_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers = {"WWW-Authenticate":"Bearer"})
+  missing_token_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials: Missing token", headers = {"WWW-Authenticate":"Bearer"})
   old_token_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token is expired. Log in again to obtain a new token", headers = {"WWW-Authenticate":"Bearer"})
   invalid_token_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Token", headers = {"WWW-Authenticate":"Bearer"})
   jwt_dict:dict = {'valid' : False, 'result': None }
@@ -40,14 +40,12 @@ async def get_current_user(jwt: Annotated[dict, Depends(jwt_wrapper)], db : Sess
   invalid_user_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User does not exist", headers = {"WWW-Authenticate":"Bearer"})
   # check to see if access token is in expired tokens list
   print(jwt)
-  if( not jwt['valid']): # if not valid
+  if(jwt['valid'] == False): # if not valid
     return jwt['result'] # return HTTPException
   id: str = jwt['result']['sub']
   user = database.users.get_user(db, id)
   if user is None:
-    print("user is None")
     return invalid_user_exception
-  print(user)
   return user
 
 async def get_current_active_user(current_user: Annotated[schemas.User,Depends(get_current_user)]):

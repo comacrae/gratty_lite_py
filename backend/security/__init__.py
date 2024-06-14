@@ -1,1 +1,1 @@
-from .authentication import  get_current_active_user, JWT 
+from .authentication import  get_current_active_user, jwt_wrapper

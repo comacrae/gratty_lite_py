@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from .. import schemas, database
-from ..security import get_current_active_user, JWT
+from ..security import get_current_active_user, jwt_wrapper
 
 from sqlalchemy.orm import Session
 
@@ -25,7 +25,7 @@ def read_user(user_id : int, db : Session = Depends(database.get_db)):
   return db_user
 
 @router.post("/register", response_model=schemas.User)
-def create_user(db: Session = Depends(database.get_db), jwt = Annotated[dict,Depends(JWT)]):
+def create_user(db: Session = Depends(database.get_db), jwt = Annotated[dict,Depends(jwt_wrapper)]):
   try:
     user: schemas.UserCreate = schemas.UserCreate(id=jwt.sub,  email=jwt.user.sub);
   except:
