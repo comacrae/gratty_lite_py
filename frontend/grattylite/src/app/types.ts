@@ -1,27 +1,29 @@
-type UserPublic = {
+type FastApiUserPublic = {
   id: string;
   username: string;
 };
 
-type User = {
+type FastApiUser = {
   id: string;
   username: string;
   email: string;
   disabled: boolean;
-  posts: Post[];
-  followers: UserPublic[];
-  following: UserPublic[];
+  posts: FastApiPost[];
+  followers: FastApiUserPublic[];
+  following: FastApiUserPublic[];
 };
 
-type Post = {
+type FastApiPost = {
   id: number;
   owner_id: string;
   public: boolean;
-  items: PostItem[];
+  items: FastApiPostItem[];
 };
 
-type PostItem = {
+type FastApiPostItem = {
   id: number;
   post_id: number;
   text: string;
 };
+
+export type { FastApiPost, FastApiPostItem, FastApiUser, FastApiUserPublic };

@@ -25,7 +25,21 @@ def delete_user(db: Session, user_id: int):
   db_user = get_user(db, user_id)
   if db_user is None:
     return None
-  db.delete(db_user)
-  db.commit()
-  return True
+  try:
+    db.delete(db_user)
+    db.commit()
+    return True
+  except:
+    db.rollback()
+    return False
+
+def delete_all_users(db:Session):
+  try:
+    db.query(models.User).delete()
+    db.commit()
+    return True
+  except:
+    db.rollback()
+    return False
+
  

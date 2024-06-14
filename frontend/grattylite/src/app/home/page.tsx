@@ -1,14 +1,16 @@
+"use server";
 import { fastApiGet } from "../actions";
-async function getUsername() {
+import { FastApiUser } from "../types";
+async function getFastApiUser(): Promise<FastApiUser> {
   const result = await fastApiGet("/users/me");
-
-  return result.message.id;
+  const user: FastApiUser = result?.message;
+  return user;
 }
-export default function HomePage() {
-  const result = getUsername();
+export default async function HomePage() {
+  const user = await getFastApiUser();
   return (
     <main>
-      <p>{result}</p>
+      <p>{user.email}</p>
     </main>
   );
 }

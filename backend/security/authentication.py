@@ -11,9 +11,11 @@ from fastapi_nextauth_jwt.exceptions import InvalidTokenError, TokenExpiredExcep
 
 def read_auth_config(file_path:str = "./backend/security/auth_config.json"):
   cfg : dict = json.load(open(file_path, "r"))
-  return cfg['SECRET_KEY']
-SECRET_KEY =  read_auth_config()
-os.environ["NEXTAUTH_URL"] = "http://127.0.0.1:3000"
+  return cfg['SECRET_KEY'], cfg['NEXTAUTH_URL']
+
+SECRET_KEY, NEXTAUTH_URL=  read_auth_config()
+
+os.environ["NEXTAUTH_URL"] = NEXTAUTH_URL 
 
 JWT = NextAuthJWT(secret='test',csrf_prevention_enabled=False )
 
@@ -34,18 +36,25 @@ async def jwt_wrapper(req: Request):
   finally:
     return jwt_dict
   
-
+def create_user(id:str, email:str, db: Session = Depends(database.get_db)):
+  try:
+    user: schemas.UserCreate = schemas.UserCreate(id=id,  email=email)
+  except:
+    raise HTTPException(status_code=400, detail="Token didn't contain necessary info")
+  db_user = database.users.get_user_by_email(db, email=user.email)
+  if db_user:
+      raise HTTPException(status_code=400, detail="Email already registered")
+  return database.users.create_user(db=db, user=user)
 
 async def get_current_user(jwt: Annotated[dict, Depends(jwt_wrapper)], db : Session = Depends(database.get_db)):
-  invalid_user_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User does not exist", headers = {"WWW-Authenticate":"Bearer"})
-  # check to see if access token is in expired tokens list
-  print(jwt)
   if(jwt['valid'] == False): # if not valid
     return jwt['result'] # return HTTPException
   id: str = jwt['result']['sub']
+  email:str = jwt['result']['email']
   user = database.users.get_user(db, id)
-  if user is None:
-    return invalid_user_exception
+
+  if user is None: # if user is accessing FastAPI backend for first time, create user 
+    user = create_user(id,email,db)
   return user
 
 async def get_current_active_user(current_user: Annotated[schemas.User,Depends(get_current_user)]):

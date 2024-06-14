@@ -24,16 +24,6 @@ def read_user(user_id : int, db : Session = Depends(database.get_db)):
     raise HTTPException(status_code = 404, detail = "User not found")
   return db_user
 
-@router.post("/register", response_model=schemas.User)
-def create_user(db: Session = Depends(database.get_db), jwt = Annotated[dict,Depends(jwt_wrapper)]):
-  try:
-    user: schemas.UserCreate = schemas.UserCreate(id=jwt.sub,  email=jwt.user.sub);
-  except:
-    raise HTTPException(status_code=400, detail="Token didn't contain necessary info")
-  db_user = database.users.get_user_by_email(db, email=user.email)
-  if db_user:
-      raise HTTPException(status_code=400, detail="Email already registered")
-  return database.users.create_user(db=db, user=user)
 
 @router.delete("/delete")
 def delete_user_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):

@@ -18,3 +18,7 @@ def create_user(user_id: str, user_email:str, db = Depends(get_db)):
 def delete_users(user_id:str, db = Depends(get_db)):
   return database.users.delete_user(db,user_id)
 
+@router.delete("/wipe-users")
+def delete_users( db = Depends(get_db)):
+  return database.users.delete_all_users(db)
+
