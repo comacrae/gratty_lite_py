@@ -1,21 +1,26 @@
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Auth0 from "next-auth/providers/auth0";
 
 export const config = {
+  secret: "test",
   debug: true,
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(request) {
-        return { id: "1", email: "test@gmail.com", name: "jane" };
-      },
+    Auth0({
+      clientSecret: process.env.AUTH_AUTH0_SECRET,
+      clientId: process.env.AUTH_AUTH0_ID,
+      issuer: process.env.AUTH_AUTH0_ISSUER,
     }),
   ],
-  secret: "test",
+  callbacks: {
+    jwt({ token, user }) {
+      // this doesn't do anything since Auth0 doesn't return user
+      return token;
+    },
+    session({ session, token }) {
+      session.sub = token.sub;
+      return session;
+    },
+  },
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth(config);

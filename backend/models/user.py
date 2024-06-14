@@ -7,12 +7,12 @@ from ..database import Base
 
 class User(Base):
 
+
   __tablename__ = "users"
 
-  id = Column(Integer, primary_key=True)
-  username = Column(String, unique=True)
+  id = Column(String, primary_key=True)
+  username = Column(String,unique=True, nullable=True, default=None)
   email = Column(String,unique=True,index=True)
-  hashed_password= Column(String(255))
   disabled= Column(Boolean, default=False)
 
   posts = relationship("Post", back_populates="owner")
@@ -23,6 +23,9 @@ class User(Base):
         secondaryjoin=lambda: User.id == user_following.c.following_id,
         backref='followers'
     )
+
+  def __repr__(self):
+    return "<User(id=%s email=%s)>" % (self.id, self.email)
 
 user_following = Table(
   'user_following', Base.metadata,

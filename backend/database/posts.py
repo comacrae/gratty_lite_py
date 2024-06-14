@@ -14,7 +14,7 @@ def get_any_post(db:Session, post_id: int, requesting_id : int):
   db_post = db.execute(stmt).first()
   return  None if db_post is None else db_post[0]
 
-def get_public_posts_by_author(db:Session, owner_id: int, skip: int = 0, limit:int = 100):
+def get_public_posts_by_author(db:Session, owner_id: str, skip: int = 0, limit:int = 100):
   stmt = select(models.Post).where(models.Post.owner_id == owner_id).where(models.Post.public == True).offset(skip).limit(limit)
   return db.scalars(stmt).all()
 

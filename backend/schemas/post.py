@@ -2,7 +2,7 @@ from pydantic import BaseModel, PastDatetime
 from .post_item import PostItem
 
 class PostBase(BaseModel):
-  owner_id: int
+  owner_id: str
   public: bool = False
 
 class PostCreate(PostBase):

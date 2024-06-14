@@ -1,9 +1,12 @@
 from fastapi import Depends, FastAPI, Request
+from .database import engine, Base
+from .internal import admin
 from .routers import users, posts, post_items, subscriptions
 from .security import JWT
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 
+Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [ "http://localhost:3000/login",
@@ -12,6 +15,7 @@ origins = [ "http://localhost:3000/login",
 
 
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_origin_regex="http://localhost.*",allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+app.include_router(admin.router)
 app.include_router(users.router)
 app.include_router(posts.router)
 app.include_router(post_items.router)

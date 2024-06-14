@@ -2,20 +2,21 @@ from pydantic import BaseModel
 from .post import Post
 
 class UserBase(BaseModel):
-  username: str
-  email: str
+  id : str
+  email:str
 
 class UserCreate(UserBase):
-  password: str
+  pass
 
 class UserPublic(BaseModel):
-  id: int
-  username: str
+  id:str
+  username: str | None
 
 class User(UserBase):
-  id: int
-  username: str
-  disabled: bool
+  id: str
+  username: str | None = ""
+  email: str
+  disabled: bool = False
   posts : list[Post] = []
   followers: list[UserPublic] = []
   following: list[UserPublic] = []
