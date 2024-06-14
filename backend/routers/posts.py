@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException,status
 from typing import Annotated
-from ..security import get_current_active_user
+from ..security import get_current_active_user, jwt_wrapper
 from .. import schemas, database, models
 
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/posts")
+router = APIRouter(prefix="/posts", dependencies=[Depends(jwt_wrapper)])
 
 
 @router.get("/{post_id}", response_model = schemas.Post)

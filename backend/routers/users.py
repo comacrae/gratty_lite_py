@@ -6,7 +6,7 @@ from ..security import get_current_active_user, jwt_wrapper
 from sqlalchemy.orm import Session
 
 
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix="/users", dependencies=[Depends(jwt_wrapper)])
 
 @router.get("/", response_model=list[schemas.UserPublic])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):

@@ -2,10 +2,10 @@ from typing import Annotated
 from ..database import get_db, post_items
 from fastapi import APIRouter, Depends,HTTPException, status
 from .. import schemas
-from ..security import get_current_active_user
+from ..security import get_current_active_user, jwt_wrapper
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/post-items")
+router = APIRouter(prefix="/post-items", dependencies=[Depends(jwt_wrapper)])
 
 @router.get("/users/me/", response_model=list[str])
 def read_own_items(current_user:Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(get_db), skip:int = 0, limit: int = 100):

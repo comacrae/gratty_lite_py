@@ -1,10 +1,10 @@
 from typing import Annotated
-from ..security import get_current_active_user
+from ..security import get_current_active_user, jwt_wrapper
 from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import schemas, database
 
-router = APIRouter(prefix="/subscriptions")
+router = APIRouter(prefix="/subscriptions", dependencies=[Depends(jwt_wrapper)])
 
 @router.get("/followers/user/me", response_model = list[schemas.UserPublic])
 def read_followers_me( current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
