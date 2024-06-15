@@ -1,13 +1,14 @@
 from ..database import get_db
-from .. import database, schemas
+from .. import database, schemas, models
 from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter(prefix='/admin')
 
-def verify(password : str):
-  if(password != "admin_password"):
-    raise HTTPException(status_code=400, detail="Not authorized as admin")
-  return True
+
+@router.get("/view-all-users")
+def read_users(db = Depends(get_db)):
+  return db.query(models.User).all()
+
 
 @router.post("/create-user/id/{user_id}/email/{user_email}")
 def create_user(user_id: str, user_email:str, db = Depends(get_db)):

@@ -13,11 +13,9 @@ export const config = {
   ],
   callbacks: {
     jwt({ token, user }) {
-      // this doesn't do anything since Auth0 doesn't return user
       return token;
     },
     session({ session, token }) {
-      session.sub = token.sub;
       return session;
     },
   },

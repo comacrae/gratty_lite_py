@@ -7,20 +7,16 @@ export async function fastApiGet(apiRequest: string) {
   // This function is a general GET for FASTAPI url
   const session = await auth();
 
-  if (session == null || !session?.user) redirect("/");
+  if (session == null || !session?.user) redirect("/home?login-success=false");
 
   const result = await fetch(fastApiUrl + apiRequest, {
     method: "GET",
     headers: headers(),
-  })
-    .then(function (res: Response) {
-      if (!res.ok) {
-        throw new Error("Failed GET request to api: " + apiRequest);
-      }
-      return res.json();
-    })
-    .then(function (data) {
-      return { message: data };
-    });
+  }).then(function (res: Response) {
+    if (!res.ok) {
+      throw new Error("Failed GET request to api: " + apiRequest);
+    }
+    return res.json();
+  });
   return result;
 }

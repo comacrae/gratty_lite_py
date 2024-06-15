@@ -1,9 +1,15 @@
 import { auth } from "@/app/auth";
-import { headers } from "next/headers";
+import {
+  getFastApiUserById,
+  getFastApiCurrentUser,
+  getFastApiCurrentUserId,
+  getFastApiUsers,
+} from "@/app/_actions/users";
 async function test() {
-  return await fetch("http://127.0.0.1:8000/users/me", {
-    headers: headers(),
-  });
+  const session = await auth();
+
+  const result = await getFastApiUsers();
+  return Response.json(result);
 }
 
 export { test as GET };

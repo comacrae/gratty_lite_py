@@ -1,10 +1,10 @@
 type FastApiUserPublic = {
-  id: string;
-  username: string;
+  id: number;
+  email: string;
 };
 
 type FastApiUser = {
-  id: string;
+  id: number;
   username: string;
   email: string;
   disabled: boolean;
@@ -15,7 +15,7 @@ type FastApiUser = {
 
 type FastApiPost = {
   id: number;
-  owner_id: string;
+  owner_id: number;
   public: boolean;
   items: FastApiPostItem[];
 };

@@ -33,20 +33,16 @@ async def jwt_wrapper(req: Request):
   except TokenExpiredException:
     raise old_token_exception
   
-def create_user(id:str, email:str, db: Session = Depends(database.get_db)):
-  user: schemas.UserCreate = schemas.UserCreate(id=id,  email=email)
-  db_user = database.users.get_user_by_email(db, email=user.email)
-  if db_user:
-      raise HTTPException(status_code=400, detail="Email already registered")
-  return database.users.create_user(db=db, user=user)
 
 async def get_current_user(jwt: Annotated[dict, Depends(jwt_wrapper)], db : Session = Depends(database.get_db)):
   try:
-    id: str = jwt['sub']
     email:str = jwt['email']
-    user = database.users.get_user(db, id)
-    if user is None: # if user is accessing FastAPI backend for first time, create user 
-      user = create_user(id,email,db)
+    user = database.users.get_user_by_email(db=db,email=email)
+    if user is None:
+        user: schemas.UserCreate = schemas.UserCreate(email=email)
+        user =  database.users.create_user(db=db, user=user)
+        if user is None: # if user creation doesn't work
+          raise  HTTPException(status_code=status.HTTP_500_UNAUTHORIZED, detail="Could not create user while accessing API for first time", headers = {"WWW-Authenticate":"Bearer"})
     return user
   except:
      raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials: Token missing values", headers = {"WWW-Authenticate":"Bearer"})

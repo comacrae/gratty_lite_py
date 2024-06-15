@@ -7,10 +7,9 @@ from ..database import Base
 
 class User(Base):
 
-
   __tablename__ = "users"
 
-  id = Column(String, primary_key=True)
+  id = Column(Integer, primary_key=True)
   username = Column(String,unique=True, nullable=True, default=None)
   email = Column(String,unique=True,index=True)
   disabled= Column(Boolean, default=False)

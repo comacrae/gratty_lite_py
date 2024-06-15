@@ -2,18 +2,18 @@ from pydantic import BaseModel
 from .post import Post
 
 class UserBase(BaseModel):
-  id : str
+  # email will be unique identifier, god help us
   email:str
 
 class UserCreate(UserBase):
   pass
 
 class UserPublic(BaseModel):
-  id:str
-  username: str | None
+  id:int
+  email: str
 
 class User(UserBase):
-  id: str
+  id: int
   username: str | None = ""
   email: str
   disabled: bool = False

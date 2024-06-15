@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
 from .. import schemas, database
 from ..security import get_current_active_user, jwt_wrapper
@@ -16,6 +16,10 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.g
 @router.get("/me", response_model=schemas.User)
 def read_users_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)]):
   return current_user
+
+@router.get("/me/id", response_model=int)
+def read_users_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)]):
+  return current_user.id 
 
 @router.get("/{user_id}", response_model=schemas.UserPublic)
 def read_user(user_id : int, db : Session = Depends(database.get_db)):
