@@ -41,18 +41,24 @@ def read_posts_by_author( user_id:int, db :Session = Depends(database.get_db), s
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
   return db_posts
 
+
+def create_post_items(post_id:int,post_texts:list[str],db:Session = Depends(database.get_db)):
+  for post_text in post_texts:
+    post_item_schema = schemas.PostItemCreate(text=post_text, post_id=post_id)
+    database.post_items.create_post_item(db,post_item_schema )
+  return
+
 @router.post("/user/me",response_model=schemas.Post)
 def create_post(post: schemas.PostCreate, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):
   db_post = database.posts.create_post(db=db, owner_id = current_user.id, post=post)
-  for post_text in post.post_texts:
-    post_item_schema = schemas.PostItemCreate(text=post_text, post_id=db_post.id)
-    database.post_items.create_post_item(db,post_item_schema )
+  create_post_items(post_id = db_post.id, post_texts=post.post_texts,db=db)
   return db_post
 
 @router.put("/update/{post_id}", response_model=schemas.Post)
-def update_post(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], new_post_item: schemas.PostItemUpdate, db : Session = Depends(database.get_db)):
-  db_post_item: schemas.PostItemCreate = schemas.PostItemCreate(text=new_post_item.text, post_id=post_id)
-  db_post : models.Post = database.posts.update_post(db,post_id, requesting_id=current_user.id, post_item=db_post_item)
+def update_post(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], new_post: schemas.PostCreate, db : Session = Depends(database.get_db)):
+  db_post : models.Post = database.posts.update_post(db,post_id, requesting_id=current_user.id, new_post=new_post)
+  db_post.items = [] # delete prior post items
+  create_post_items(post_id = db_post.id, post_texts=new_post.post_texts,db=db)
   if db_post is None:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post not found")
   return db_post

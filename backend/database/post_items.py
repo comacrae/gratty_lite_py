@@ -22,7 +22,7 @@ def create_post_item(db:Session, post_item : schemas.PostItemCreate):
   db.refresh(db_post_item)
   return db_post_item
 
-def delete_post_item(db:Session, post_item_id:int, requesting_id:int):
+def delete_post_item(db:Session, post_item_id:int):
   db_post_item : models.PostItem = get_post_item_by_id(db, post_item_id)
   db.delete(db_post_item)
   db.commit()

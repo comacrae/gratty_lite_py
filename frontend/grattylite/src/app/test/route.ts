@@ -1,16 +1,15 @@
 import { auth } from "@/app/auth";
-import { headers } from "next/headers";
-import { fastApiPostRequest } from "../_actions/http";
+import { fastApiPostJSONRequest } from "../_actions/http";
+import { FastApiPostCreate } from "../types";
 
-async function test(crsfToken: string) {
+async function test() {
   const session = await auth();
-  const testPost = {
-    owner_id: 1,
+  const testPost: FastApiPostCreate = {
     public: false,
     post_texts: ["csrftest", "csrftest2"],
   };
 
-  const result = await fastApiPostRequest("/posts/user/me", testPost);
+  const result = await fastApiPostJSONRequest("/posts/user/me", testPost);
   return Response.json(result);
 }
 

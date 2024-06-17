@@ -29,11 +29,11 @@ def create_post(db:Session, owner_id:int, post : schemas.PostCreate):
   db.refresh(db_post)
   return db_post
 
-def update_post(db:Session, post_id:int, requesting_id: int, post_item : schemas.PostItemCreate):
+def update_post(db:Session, post_id:int, requesting_id: int, new_post : schemas.PostCreate):
   db_post : models.Post = get_any_post(db,post_id, requesting_id)
   if db_post is None:
     return None
-  db_post.items.append(create_post_item(db, post_item))
+  db_post.public = new_post.public
   db.commit()
   db.refresh(db_post)
   return db_post
