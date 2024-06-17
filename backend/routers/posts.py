@@ -57,11 +57,11 @@ def create_post(post: schemas.PostCreate, current_user : Annotated[schemas.User,
 @router.put("/update/{post_id}", response_model=schemas.Post)
 def update_post(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], new_post: schemas.PostCreate, db : Session = Depends(database.get_db)):
   db_post : models.Post = database.posts.update_post(db,post_id, requesting_id=current_user.id, new_post=new_post)
-  db_post.items = [] # delete prior post items
-  create_post_items(post_id = db_post.id, post_texts=new_post.post_texts,db=db)
   if db_post is None:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post not found")
-  return db_post
+  db_post.items = [] # delete prior post items
+  create_post_items(post_id = db_post.id, post_texts=new_post.post_texts,db=db)
+  return
 
 @router.delete("/delete/{post_id}")
 def read_posts_me(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db)):

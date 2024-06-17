@@ -60,15 +60,10 @@ export async function fastApiPutJSONRequest(apiRequest: string, jsonBody: any) {
   if (session == null || !session?.user) redirect("/home?login-success=false");
   const header = await getJSONHeader();
 
-  const result = await fetch(fastApiUrl + apiRequest, {
+  const res = await fetch(fastApiUrl + apiRequest, {
     method: "PUT",
     headers: header,
     body: JSON.stringify(jsonBody),
-  }).then(function (res: Response) {
-    if (!res.ok) {
-      throw new Error("Failed POST request to api: " + apiRequest);
-    }
-    return res.json();
   });
-  return result;
+  return res.status;
 }

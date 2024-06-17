@@ -1,4 +1,8 @@
-import { fastApiGetRequest, fastApiPostJSONRequest } from "./http";
+import {
+  fastApiGetRequest,
+  fastApiPostJSONRequest,
+  fastApiPutJSONRequest,
+} from "./http";
 
 import { FastApiPost, FastApiPostItem, FastApiPostCreate } from "@/app/types";
 
@@ -31,4 +35,22 @@ export async function createPost(isPublic: boolean, postItems: string[]) {
 
   const result = await fastApiPostJSONRequest("/posts/user/me", post);
   return Response.json(result);
+}
+
+export async function updatePost(
+  isPublic: boolean,
+  postItems: string[],
+  postId: number
+) {
+  const post: FastApiPostCreate = {
+    public: isPublic,
+    post_texts: postItems,
+  };
+
+  const status = await fastApiPutJSONRequest(`/posts/update/${postId}`, post);
+  if (status == 200) {
+    return { detail: "success" };
+  } else if (status == 404) {
+    return { detail: "post not found" };
+  }
 }

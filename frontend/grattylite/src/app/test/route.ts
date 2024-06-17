@@ -1,15 +1,11 @@
 import { auth } from "@/app/auth";
-import { fastApiPostJSONRequest } from "../_actions/http";
+import { updatePost } from "../_actions/posts";
 import { FastApiPostCreate } from "../types";
 
 async function test() {
   const session = await auth();
-  const testPost: FastApiPostCreate = {
-    public: false,
-    post_texts: ["csrftest", "csrftest2"],
-  };
 
-  const result = await fastApiPostJSONRequest("/posts/user/me", testPost);
+  const result = await updatePost(true, ["jong", "jing"], 44);
   return Response.json(result);
 }
 
