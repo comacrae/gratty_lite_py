@@ -66,6 +66,6 @@ def update_post(post_id:int, current_user : Annotated[schemas.User, Depends(get_
 @router.delete("/delete/{post_id}")
 def read_posts_me(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db)):
   if database.posts.delete_post(db, post_id, current_user.id):
-    return {}
+    return 
   else:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post not found")

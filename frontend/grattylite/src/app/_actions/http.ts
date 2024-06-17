@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/app/auth";
 import { headers } from "next/headers";
+import { FastApiStatusResponse } from "../types";
 const fastApiUrl = process.env.FASTAPI_URL;
 
 // TODO: More comprehensive error messages
@@ -66,4 +67,38 @@ export async function fastApiPutJSONRequest(apiRequest: string, jsonBody: any) {
     body: JSON.stringify(jsonBody),
   });
   return res.status;
+}
+
+export async function fastApiDeleteRequest(apiRequest: string) {
+  // This function is a general GET for FASTAPI url
+  const session = await auth();
+  if (session == null || !session?.user) redirect("/home?login-success=false");
+
+  const res = await fetch(fastApiUrl + apiRequest, {
+    method: "DELETE",
+    headers: headers(),
+  });
+  return res.status;
+}
+
+function fastApiStatusToDetail(httpStatus: number) {
+  switch (httpStatus) {
+    case 200:
+      return "success";
+    case 404:
+      return "not found";
+    default:
+      return "other";
+  }
+}
+
+export function getFastApiStatusObject(
+  httpStatus: number
+): FastApiStatusResponse {
+  const fastApiRes: FastApiStatusResponse = {
+    status: httpStatus,
+    success: httpStatus == 200,
+    detail: fastApiStatusToDetail(httpStatus),
+  };
+  return fastApiRes;
 }

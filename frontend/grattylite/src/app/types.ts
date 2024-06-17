@@ -31,10 +31,17 @@ type FastApiPostCreate = {
   post_texts: string[];
 };
 
+type FastApiStatusResponse = {
+  success: boolean;
+  status: number;
+  detail: string;
+};
+
 export type {
   FastApiPost,
   FastApiPostItem,
   FastApiUser,
   FastApiUserPublic,
   FastApiPostCreate,
+  FastApiStatusResponse,
 };

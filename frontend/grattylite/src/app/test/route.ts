@@ -1,11 +1,10 @@
 import { auth } from "@/app/auth";
-import { updatePost } from "../_actions/posts";
-import { FastApiPostCreate } from "../types";
+import { deletePost } from "../_actions/posts";
 
 async function test() {
   const session = await auth();
 
-  const result = await updatePost(true, ["jong", "jing"], 44);
+  const result = await deletePost(3);
   return Response.json(result);
 }
 

@@ -29,9 +29,12 @@ def read_user(user_id : int, db : Session = Depends(database.get_db)):
   return db_user
 
 
-@router.delete("/delete")
+@router.delete("/delete/me")
 def delete_user_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):
-  if database.users.delete_user(db, current_user.id):
-    return True
+  result =  database.users.delete_user(db, current_user.id)
+  if result is None:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Current user not found in database")
+  if result == True:
+    return # success
   else:
-    return False
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current user not deleted; Database rolled back")

@@ -1,7 +1,10 @@
-import { fastApiGetRequest } from "./http";
 import {
-  FastApiPost,
-  FastApiPostItem,
+  fastApiDeleteRequest,
+  fastApiGetRequest,
+  getFastApiStatusObject,
+} from "./http";
+import {
+  FastApiStatusResponse,
   FastApiUser,
   FastApiUserPublic,
 } from "@/app/types";
@@ -26,4 +29,9 @@ export async function getFastApiUserById(
 export async function getFastApiUsers(): Promise<FastApiUserPublic[]> {
   const users: FastApiUserPublic[] = await fastApiGetRequest("/users/");
   return users;
+}
+
+export async function deleteCurrentUser(): Promise<FastApiStatusResponse> {
+  const status = await fastApiDeleteRequest("users/delete/me");
+  return getFastApiStatusObject(status);
 }

@@ -2,9 +2,15 @@ import {
   fastApiGetRequest,
   fastApiPostJSONRequest,
   fastApiPutJSONRequest,
+  fastApiDeleteRequest,
+  getFastApiStatusObject,
 } from "./http";
 
-import { FastApiPost, FastApiPostItem, FastApiPostCreate } from "@/app/types";
+import {
+  FastApiPost,
+  FastApiPostCreate,
+  FastApiStatusResponse,
+} from "@/app/types";
 
 export async function getCurrentUserPosts(): Promise<FastApiPost[]> {
   const posts: FastApiPost[] = await fastApiGetRequest("/posts/user/me");
@@ -27,30 +33,37 @@ export async function getPostsByUserId(userId: number): Promise<FastApiPost[]> {
   return post;
 }
 
-export async function createPost(isPublic: boolean, postItems: string[]) {
+export async function createPost(
+  isPublic: boolean,
+  postItems: string[]
+): Promise<FastApiPost> {
   const post: FastApiPostCreate = {
     public: isPublic,
     post_texts: postItems,
   };
 
-  const result = await fastApiPostJSONRequest("/posts/user/me", post);
-  return Response.json(result);
+  const result: FastApiPost = await fastApiPostJSONRequest(
+    "/posts/user/me",
+    post
+  );
+  return result;
 }
 
 export async function updatePost(
   isPublic: boolean,
   postItems: string[],
   postId: number
-) {
+): Promise<FastApiStatusResponse> {
   const post: FastApiPostCreate = {
     public: isPublic,
     post_texts: postItems,
   };
 
   const status = await fastApiPutJSONRequest(`/posts/update/${postId}`, post);
-  if (status == 200) {
-    return { detail: "success" };
-  } else if (status == 404) {
-    return { detail: "post not found" };
-  }
+  return getFastApiStatusObject(status);
+}
+
+export async function deletePost(postId: number) {
+  const status = await fastApiDeleteRequest(`/posts/delete/${postId}`);
+  return getFastApiStatusObject(status);
 }
