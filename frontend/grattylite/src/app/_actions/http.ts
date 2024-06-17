@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/app/auth";
 import { headers } from "next/headers";
 import { FastApiStatusResponse } from "../types";
+
 const fastApiUrl = process.env.FASTAPI_URL;
 
 // TODO: More comprehensive error messages
@@ -127,7 +128,7 @@ export async function fastApiDeleteRequest(apiRequest: string) {
     method: "DELETE",
     headers: headers(),
   });
-  return res.status;
+  return getFastApiStatusObject(res.status);
 }
 
 function fastApiStatusToDetail(httpStatus: number) {

@@ -1,4 +1,8 @@
-import { fastApiGetRequest, fastApiPostRequest } from "./http";
+import {
+  fastApiGetRequest,
+  fastApiPostRequest,
+  fastApiDeleteRequest,
+} from "./http";
 import { FastApiStatusResponse, FastApiUserPublic } from "../types";
 
 export async function getCurrentUserFollowers(): Promise<
@@ -36,13 +40,17 @@ export async function getUserFollowingByUserId(
 export async function followUser(
   userId: number
 ): Promise<FastApiStatusResponse | FastApiStatusResponse> {
-  const result = await fastApiPostRequest(`/subscriptions/follow/${userId}`);
+  const result = await fastApiPostRequest(
+    `/subscriptions/follow/user/${userId}`
+  );
   return result;
 }
 
 export async function unfollowUser(
   userId: number
 ): Promise<FastApiStatusResponse | FastApiStatusResponse> {
-  const result = await fastApiPostRequest(`/subscriptions/follow/${userId}`);
+  const result = await fastApiDeleteRequest(
+    `/subscriptions/unfollow/user/${userId}`
+  );
   return result;
 }

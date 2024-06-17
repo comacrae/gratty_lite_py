@@ -59,19 +59,19 @@ export async function updatePost(
   isPublic: boolean,
   postItems: string[],
   postId: number
-): Promise<FastApiStatusResponse | FastApiStatusResponse> {
+): Promise<FastApiPost | FastApiStatusResponse> {
   const post: FastApiPostCreate = {
     public: isPublic,
     post_texts: postItems,
   };
 
-  const status = await fastApiPutJSONRequest(`/posts/update/${postId}`, post);
-  return getFastApiStatusObject(status);
+  const res = await fastApiPostJSONRequest(`/posts/update/${postId}`, post);
+  return res;
 }
 
 export async function deletePost(
   postId: number
 ): Promise<FastApiStatusResponse> {
   const status = await fastApiDeleteRequest(`/posts/delete/${postId}`);
-  return getFastApiStatusObject(status);
+  return status;
 }

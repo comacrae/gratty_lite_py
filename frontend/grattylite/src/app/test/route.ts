@@ -1,10 +1,13 @@
 import { auth } from "@/app/auth";
-import { getPostByPostId } from "../_actions/posts";
+import {
+  followUser,
+  unfollowUser,
+  getCurrentUserFollowers,
+  getCurrentUserFollowing,
+} from "../_actions/subscriptions";
 
 async function test() {
-  const session = await auth();
-
-  const result = await getPostByPostId(33);
+  const result = getCurrentUserFollowers();
   return Response.json(result);
 }
 
