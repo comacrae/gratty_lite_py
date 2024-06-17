@@ -15,9 +15,11 @@ def read_own_items(current_user:Annotated[schemas.User, Depends(get_current_acti
 def read_user_items(owner_id:int, db : Session = Depends(get_db), skip:int = 0, limit: int = 100):
   return  post_items.get_public_post_items_by_author(db=db, owner_id=owner_id, skip=skip, limit=limit)
 
+""" This one isn't really necessary 
 @router.delete("/delete/{post_item_id}")
 def delete_own_item(current_user:Annotated[schemas.User, Depends(get_current_active_user)], post_item_id:int, db : Session = Depends(get_db)):
   if post_items.delete_post_item(db, post_item_id, requesting_id = current_user.id):
     return {}
   else:
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="Post item does not exist")
+"""

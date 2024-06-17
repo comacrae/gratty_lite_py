@@ -1,19 +1,23 @@
-import { fastApiGetRequest } from "./http";
-import { FastApiUserPublic } from "../types";
+import { fastApiGetRequest, fastApiPostRequest } from "./http";
+import { FastApiStatusResponse, FastApiUserPublic } from "../types";
 
-export async function getCurrentUserFollowers(): Promise<FastApiUserPublic[]> {
+export async function getCurrentUserFollowers(): Promise<
+  FastApiUserPublic[] | FastApiStatusResponse
+> {
   const result = await fastApiGetRequest("/subscriptions/followers/user/me");
   return result;
 }
 
-export async function getCurrentUserFollowing(): Promise<FastApiUserPublic[]> {
+export async function getCurrentUserFollowing(): Promise<
+  FastApiUserPublic[] | FastApiStatusResponse
+> {
   const result = await fastApiGetRequest("/subscriptions/following/user/me");
   return result;
 }
 
 export async function getUserFollowersByUserId(
   userId: number
-): Promise<FastApiUserPublic[]> {
+): Promise<FastApiUserPublic[] | FastApiStatusResponse> {
   const result = await fastApiGetRequest(
     `/subscriptions/followers/user/${userId}`
   );
@@ -22,9 +26,23 @@ export async function getUserFollowersByUserId(
 
 export async function getUserFollowingByUserId(
   userId: number
-): Promise<FastApiUserPublic[]> {
+): Promise<FastApiUserPublic[] | FastApiStatusResponse> {
   const result = await fastApiGetRequest(
     `/subscriptions/following/user/${userId}`
   );
+  return result;
+}
+
+export async function followUser(
+  userId: number
+): Promise<FastApiStatusResponse | FastApiStatusResponse> {
+  const result = await fastApiPostRequest(`/subscriptions/follow/${userId}`);
+  return result;
+}
+
+export async function unfollowUser(
+  userId: number
+): Promise<FastApiStatusResponse | FastApiStatusResponse> {
+  const result = await fastApiPostRequest(`/subscriptions/follow/${userId}`);
   return result;
 }

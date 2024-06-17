@@ -37,7 +37,7 @@ def read_following_by_user_id( user_id:int, db :Session = Depends(database.get_d
 
 
 
-@router.put("/follow/user/{user_id}", response_model= list[schemas.UserPublic])
+@router.post("/follow/user/{user_id}", response_model= list[schemas.UserPublic])
 def create_follow_me(user_id:int,current_user : Annotated[schemas.User, Depends(get_current_active_user)], db:Session = Depends(database.get_db)):
   if user_id == current_user.id:
     raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail="User cannot self-follow")

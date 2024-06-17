@@ -12,23 +12,29 @@ import {
   FastApiStatusResponse,
 } from "@/app/types";
 
-export async function getCurrentUserPosts(): Promise<FastApiPost[]> {
+export async function getCurrentUserPosts(): Promise<
+  FastApiPost[] | FastApiStatusResponse
+> {
   const posts: FastApiPost[] = await fastApiGetRequest("/posts/user/me");
   return posts;
 }
 
 export async function getCurrentUserPostById(
   postId: number
-): Promise<FastApiPost> {
+): Promise<FastApiPost | FastApiStatusResponse> {
   const post: FastApiPost = await fastApiGetRequest(`/posts/user/me/${postId}`);
   return post;
 }
 
-export async function getPostByPostId(postId: number): Promise<FastApiPost> {
+export async function getPostByPostId(
+  postId: number
+): Promise<FastApiPost | FastApiStatusResponse> {
   const post: FastApiPost = await fastApiGetRequest(`/posts/${postId}`);
   return post;
 }
-export async function getPostsByUserId(userId: number): Promise<FastApiPost[]> {
+export async function getPostsByUserId(
+  userId: number
+): Promise<FastApiPost[] | FastApiStatusResponse> {
   const post: FastApiPost[] = await fastApiGetRequest(`/posts/user/${userId}`);
   return post;
 }
@@ -36,7 +42,7 @@ export async function getPostsByUserId(userId: number): Promise<FastApiPost[]> {
 export async function createPost(
   isPublic: boolean,
   postItems: string[]
-): Promise<FastApiPost> {
+): Promise<FastApiPost | FastApiStatusResponse> {
   const post: FastApiPostCreate = {
     public: isPublic,
     post_texts: postItems,
@@ -53,7 +59,7 @@ export async function updatePost(
   isPublic: boolean,
   postItems: string[],
   postId: number
-): Promise<FastApiStatusResponse> {
+): Promise<FastApiStatusResponse | FastApiStatusResponse> {
   const post: FastApiPostCreate = {
     public: isPublic,
     post_texts: postItems,
@@ -63,7 +69,9 @@ export async function updatePost(
   return getFastApiStatusObject(status);
 }
 
-export async function deletePost(postId: number) {
+export async function deletePost(
+  postId: number
+): Promise<FastApiStatusResponse> {
   const status = await fastApiDeleteRequest(`/posts/delete/${postId}`);
   return getFastApiStatusObject(status);
 }

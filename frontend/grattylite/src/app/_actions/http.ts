@@ -11,13 +11,23 @@ export async function fastApiGetRequest(apiRequest: string) {
 
   if (session == null || !session?.user) redirect("/home?login-success=false");
 
-  const result = await fetch(fastApiUrl + apiRequest, {
+  const res = await fetch(fastApiUrl + apiRequest, {
     method: "GET",
     headers: headers(),
-  }).then(function (res: Response) {
-    return res.json(); // need to handle error codes more elegantly
   });
-  return result;
+
+  const body = await res.json();
+
+  if (!res.ok) {
+    const errorResponse: FastApiStatusResponse = {
+      status: res.status,
+      success: res.status == 200,
+      detail: body?.detail,
+    };
+    return errorResponse;
+  }
+
+  return body;
 }
 
 async function getJSONHeader() {
@@ -42,21 +52,48 @@ export async function fastApiPostJSONRequest(
   if (session == null || !session?.user) redirect("/home?login-success=false");
   const header = await getJSONHeader();
 
-  const result = await fetch(fastApiUrl + apiRequest, {
+  const res = await fetch(fastApiUrl + apiRequest, {
     method: "POST",
     headers: header,
     body: JSON.stringify(jsonBody),
-  }).then(function (res: Response) {
-    if (!res.ok) {
-      throw new Error("Failed POST request to api: " + apiRequest);
-    }
-    return res.json();
   });
-  return result;
+  const body = await res.json();
+
+  if (!res.ok) {
+    const errorResponse: FastApiStatusResponse = {
+      status: res.status,
+      success: res.status == 200,
+      detail: body?.detail,
+    };
+    return errorResponse;
+  }
+  return body;
+}
+
+export async function fastApiPostRequest(apiRequest: string) {
+  // This function is a general GET for FASTAPI url
+  const session = await auth();
+  if (session == null || !session?.user) redirect("/home?login-success=false");
+
+  const res = await fetch(fastApiUrl + apiRequest, {
+    method: "POST",
+    headers: headers(),
+  });
+
+  const body = await res.json();
+
+  if (!res.ok) {
+    const errorResponse: FastApiStatusResponse = {
+      status: res.status,
+      success: res.status == 200,
+      detail: body?.detail,
+    };
+    return errorResponse;
+  }
+  return body;
 }
 
 export async function fastApiPutJSONRequest(apiRequest: string, jsonBody: any) {
-  // This function is a general GET for FASTAPI url
   const session = await auth();
   if (session == null || !session?.user) redirect("/home?login-success=false");
   const header = await getJSONHeader();
@@ -65,6 +102,18 @@ export async function fastApiPutJSONRequest(apiRequest: string, jsonBody: any) {
     method: "PUT",
     headers: header,
     body: JSON.stringify(jsonBody),
+  });
+  return res.status;
+}
+
+export async function fastApiPutRequest(apiRequest: string) {
+  // This function is a general Put for FASTAPI url
+  const session = await auth();
+  if (session == null || !session?.user) redirect("/home?login-success=false");
+
+  const res = await fetch(fastApiUrl + apiRequest, {
+    method: "PUT",
+    headers: headers(),
   });
   return res.status;
 }

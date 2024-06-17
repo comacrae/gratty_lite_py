@@ -1,10 +1,10 @@
 import { auth } from "@/app/auth";
-import { deletePost } from "../_actions/posts";
+import { getPostByPostId } from "../_actions/posts";
 
 async function test() {
   const session = await auth();
 
-  const result = await deletePost(3);
+  const result = await getPostByPostId(33);
   return Response.json(result);
 }
 
