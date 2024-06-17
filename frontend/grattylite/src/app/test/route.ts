@@ -1,14 +1,16 @@
 import { auth } from "@/app/auth";
-import {
-  getFastApiUserById,
-  getFastApiCurrentUser,
-  getFastApiCurrentUserId,
-  getFastApiUsers,
-} from "@/app/_actions/users";
-async function test() {
-  const session = await auth();
+import { headers } from "next/headers";
+import { fastApiPostRequest } from "../_actions/http";
 
-  const result = await getFastApiUsers();
+async function test(crsfToken: string) {
+  const session = await auth();
+  const testPost = {
+    owner_id: 1,
+    public: false,
+    post_texts: ["csrftest", "csrftest2"],
+  };
+
+  const result = await fastApiPostRequest("/posts/user/me", testPost);
   return Response.json(result);
 }
 

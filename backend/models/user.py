@@ -14,7 +14,7 @@ class User(Base):
   email = Column(String,unique=True,index=True)
   disabled= Column(Boolean, default=False)
 
-  posts = relationship("Post", back_populates="owner")
+  posts = relationship("Post", back_populates="owner", cascade="all, delete")
 
   following = relationship(
         'User', lambda: user_following,

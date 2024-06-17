@@ -26,4 +26,15 @@ type FastApiPostItem = {
   text: string;
 };
 
-export type { FastApiPost, FastApiPostItem, FastApiUser, FastApiUserPublic };
+type FastApiPostCreate = {
+  public: boolean;
+  post_texts: string[];
+};
+
+export type {
+  FastApiPost,
+  FastApiPostItem,
+  FastApiUser,
+  FastApiUserPublic,
+  FastApiPostCreate,
+};

@@ -22,8 +22,8 @@ def get_all_posts_by_author(db:Session, owner_id: int, skip: int = 0, limit:int 
   stmt = select(models.Post).where(models.Post.owner_id == owner_id).offset(skip).limit(limit)
   return db.scalars(stmt).all()
 
-def create_post(db:Session, post : schemas.PostCreate):
-  db_post = models.Post(owner_id = post.owner_id, public = post.public)
+def create_post(db:Session, owner_id:int, post : schemas.PostCreate):
+  db_post = models.Post(owner_id = owner_id, public = post.public)
   db.add(db_post)
   db.commit()
   db.refresh(db_post)

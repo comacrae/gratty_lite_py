@@ -23,7 +23,7 @@ def read_posts_me( current_user : Annotated[schemas.User, Depends(get_current_ac
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="User not found")
   return db_posts
 
-@router.get("/user/me/{post_id}", response_model = list[schemas.Post])
+@router.get("/user/me/{post_id}", response_model = schemas.Post)
 def read_posts_me( post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db)):
   db_post = database.posts.get_any_post(db=db,post_id=post_id, requesting_id = current_user.id )
   if db_post is None:
@@ -42,9 +42,8 @@ def read_posts_by_author( user_id:int, db :Session = Depends(database.get_db), s
   return db_posts
 
 @router.post("/user/me",response_model=schemas.Post)
-def create_post(post :schemas.PostCreate, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):
-  post.owner_id = current_user.id
-  db_post = database.posts.create_post(db,post)
+def create_post(post: schemas.PostCreate, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db : Session = Depends(database.get_db)):
+  db_post = database.posts.create_post(db=db, owner_id = current_user.id, post=post)
   for post_text in post.post_texts:
     post_item_schema = schemas.PostItemCreate(text=post_text, post_id=db_post.id)
     database.post_items.create_post_item(db,post_item_schema )

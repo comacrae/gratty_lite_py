@@ -1,17 +1,18 @@
-from pydantic import BaseModel, PastDatetime
+from datetime import datetime
+from pydantic import BaseModel
 from .post_item import PostItem
 
 class PostBase(BaseModel):
-  owner_id: int
   public: bool = False
 
 class PostCreate(PostBase):
   post_texts : list[str] = []
 
 class Post(PostBase):
+  owner_id:int 
   id: int
   items: list[PostItem] = []
-  #created_date: PastDatetime
+  time_created: datetime
   
   class Config:
     from_attributes = True

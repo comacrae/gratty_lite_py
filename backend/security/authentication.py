@@ -17,7 +17,7 @@ SECRET_KEY, NEXTAUTH_URL=  read_auth_config()
 
 os.environ["NEXTAUTH_URL"] = NEXTAUTH_URL 
 
-JWT = NextAuthJWT(secret='test',csrf_prevention_enabled=False)
+JWT = NextAuthJWT(secret='test',csrf_prevention_enabled=False) # implement csrf later on
 
 
 async def jwt_wrapper(req: Request):

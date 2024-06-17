@@ -6,3 +6,5 @@
 - COMPLETE: add a limit to post and post-item GET requests (similar to user setup)
 
 6-8-24
+
+-implement csrf token acception (requires somehow adding the csrf token using getCsrfToken react hook and combining it with useSession hook to )

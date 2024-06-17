@@ -11,14 +11,14 @@ export const config = {
       issuer: process.env.AUTH_AUTH0_ISSUER,
     }),
   ],
-  callbacks: {
+  /*callbacks: {
     jwt({ token, user }) {
       return token;
     },
     session({ session, token }) {
       return session;
     },
-  },
+  },*/
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth(config);
