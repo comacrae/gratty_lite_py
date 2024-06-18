@@ -32,6 +32,6 @@ export async function getFastApiUsers(): Promise<FastApiUserPublic[]> {
 }
 
 export async function deleteCurrentUser(): Promise<FastApiStatusResponse> {
-  const status = await fastApiDeleteRequest("users/delete/me");
-  return getFastApiStatusObject(status);
+  const status = await fastApiDeleteRequest("/users/delete/me");
+  return status;
 }
