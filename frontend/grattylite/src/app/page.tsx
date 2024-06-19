@@ -1,6 +1,6 @@
-"use server";
-import Navbar from "./navbar";
+"use client";
+import ListForm from "@/components/listform/ListForm";
 
-export default async function Home() {
-  return <body className="bg-transparent">{Navbar()}</body>;
+export default function Home() {
+  return <main className="bg-transparent">{<ListForm />}</main>;
 }
