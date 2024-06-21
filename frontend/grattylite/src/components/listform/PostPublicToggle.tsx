@@ -10,7 +10,7 @@ export default function PostPublicToggle({
         <span className="label-text px-2">Allow Public Access</span>
         <input
           type="checkbox"
-          className="toggle"
+          className="toggle toggle-info"
           id="post-type-switch"
           onClick={(e) => {
             onClickFunction(e.currentTarget.checked);

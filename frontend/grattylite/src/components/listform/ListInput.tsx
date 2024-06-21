@@ -1,44 +1,41 @@
 "use client";
-import { useState } from "react";
+import { PlusIcon } from "@heroicons/react/24/outline";
 interface ListInputProps {
   addItemFunction: Function;
+  setErrorMessageFunction: Function;
 }
 
-function onAddItem(addFunc: Function, setErrorMessage: Function) {
+function onAddItem(addFunc: Function) {
   const element: HTMLElement | null = document.getElementById("item-add-text");
   if (!(element instanceof HTMLInputElement)) return;
   const value: string = element.value;
-  const resultMsg = addFunc(value);
-  if (resultMsg != "success") setErrorMessage(resultMsg);
+  addFunc(value);
   element.value = "";
   return;
 }
 
-export default function ListInput({ addItemFunction }: ListInputProps) {
-  const [errorMessage, setErrorMessage] = useState("");
+export default function ListInput({
+  addItemFunction,
+  setErrorMessageFunction,
+}: ListInputProps) {
   return (
-    <>
-      {errorMessage.length > 0 ? (
-        <p className="text-error">{errorMessage}</p>
-      ) : null}
-      <div className="join join-horizontal">
-        <input
-          className="input-bordered join-item px-2"
-          id="item-add-text"
-          placeholder="..."
-          onClick={() => {
-            setErrorMessage("");
-          }}
-        />
-        <button
-          className="btn join-item"
-          onClick={() => {
-            onAddItem(addItemFunction, setErrorMessage);
-          }}
-        >
-          add
-        </button>
-      </div>
-    </>
+    <div className="join join-horizontal">
+      <input
+        className="input-bordered join-item px-2"
+        id="item-add-text"
+        placeholder="..."
+        onClick={() => {
+          setErrorMessageFunction("");
+        }}
+      />
+      <button
+        className="btn join-item hover:bg-success"
+        onClick={() => {
+          onAddItem(addItemFunction);
+        }}
+      >
+        <PlusIcon className="size-4" />
+      </button>
+    </div>
   );
 }

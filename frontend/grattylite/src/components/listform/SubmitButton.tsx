@@ -1,8 +1,12 @@
 "use client";
 interface SubmitButtonProps {
   onClickFunction: Function;
+  submitStatus: string;
 }
-export default function SubmitButton({ onClickFunction }: SubmitButtonProps) {
+export default function SubmitButton({
+  onClickFunction,
+  submitStatus,
+}: SubmitButtonProps) {
   return (
     <button
       className="btn btn-primary"
@@ -10,7 +14,7 @@ export default function SubmitButton({ onClickFunction }: SubmitButtonProps) {
         onClickFunction();
       }}
     >
-      Submit
+      {submitStatus === "submitting" ? "Submitting..." : "Submit"}
     </button>
   );
 }

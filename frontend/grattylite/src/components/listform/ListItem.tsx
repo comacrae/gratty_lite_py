@@ -1,3 +1,5 @@
+"use client";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 interface ListItemProps {
   text: string;
   deleteCallback: Function;
@@ -10,12 +12,12 @@ export default function ListItem({ text, deleteCallback }: ListItemProps) {
         {text}
       </li>
       <button
-        className="btn btn-outline btn-sm join-item"
+        className="btn btn-outline btn-sm join-item px-0 hover:bg-warning"
         onClick={() => {
           deleteCallback(text);
         }}
       >
-        delete
+        <XMarkIcon className="size-4" />
       </button>
     </div>
   );

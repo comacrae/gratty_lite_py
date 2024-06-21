@@ -1,3 +1,4 @@
+"use server";
 import {
   fastApiGetRequest,
   fastApiPostJSONRequest,
@@ -47,7 +48,6 @@ export async function createPost(
     public: isPublic,
     post_texts: postItems,
   };
-
   const result: FastApiPost = await fastApiPostJSONRequest(
     "/posts/user/me",
     post

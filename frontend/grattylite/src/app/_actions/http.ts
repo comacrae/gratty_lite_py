@@ -1,3 +1,4 @@
+"use server";
 import { redirect } from "next/navigation";
 import { auth } from "@/app/auth";
 import { headers } from "next/headers";
@@ -38,7 +39,7 @@ async function getJSONHeader() {
   } = { "Content-Type": "application/json" };
 
   [...oldHeaders.entries()].reduce((o, [k, v]) => {
-    newHeader[k] = v;
+    if (k != "content-type") newHeader[k] = v;
     return o;
   });
   return newHeader;
@@ -52,7 +53,6 @@ export async function fastApiPostJSONRequest(
   const session = await auth();
   if (session == null || !session?.user) redirect("/home?login-success=false");
   const header = await getJSONHeader();
-
   const res = await fetch(fastApiUrl + apiRequest, {
     method: "POST",
     headers: header,
@@ -142,9 +142,9 @@ function fastApiStatusToDetail(httpStatus: number) {
   }
 }
 
-export function getFastApiStatusObject(
+export async function getFastApiStatusObject(
   httpStatus: number
-): FastApiStatusResponse {
+): Promise<FastApiStatusResponse> {
   const fastApiRes: FastApiStatusResponse = {
     status: httpStatus,
     success: httpStatus == 200,
