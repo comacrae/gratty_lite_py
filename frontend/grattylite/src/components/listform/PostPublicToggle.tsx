@@ -7,7 +7,7 @@ export default function PostPublicToggle({
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">Allow Public Access</span>
+        <span className="label-text px-2">Allow Public Access</span>
         <input
           type="checkbox"
           className="toggle"

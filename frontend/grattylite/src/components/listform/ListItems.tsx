@@ -1,18 +1,18 @@
 import ListItem from "./ListItem";
-import { DeleteButton } from "./DeleteButton";
 interface ListItemsProps {
   items: string[];
   deleteCallback: Function;
 }
 export default function ListItems({ items, deleteCallback }: ListItemsProps) {
   return (
-    <ul>
+    <ul className="grid grid-cols-1 gap-2">
       {items.map((value: string, idx: number) => {
         return (
-          <div className="join" key={idx + value}>
-            <ListItem text={value} />
-            <DeleteButton deleteKey={value} onClick={deleteCallback} />
-          </div>
+          <ListItem
+            text={value}
+            deleteCallback={deleteCallback}
+            key={idx + value}
+          />
         );
       })}
     </ul>
