@@ -18,6 +18,7 @@ type FastApiPost = {
   owner_id: number;
   public: boolean;
   items: FastApiPostItem[];
+  time_created: string;
 };
 
 type FastApiPostItem = {
