@@ -34,12 +34,15 @@ export async function fastApiGetRequest(apiRequest: string) {
 
 async function getJSONHeader() {
   const oldHeaders = await headers();
+  const doNotInclude = ["content-type", "content-length"];
   const newHeader: {
     [key: string]: any;
-  } = { "Content-Type": "application/json" };
+  } = {
+    "Content-Type": "application/json",
+  };
 
   [...oldHeaders.entries()].reduce((o, [k, v]) => {
-    if (k != "content-type") newHeader[k] = v;
+    if (!doNotInclude.includes(k)) newHeader[k] = v;
     return o;
   });
   return newHeader;
@@ -53,6 +56,7 @@ export async function fastApiPostJSONRequest(
   const session = await auth();
   if (session == null || !session?.user) redirect("/home?login-success=false");
   const header = await getJSONHeader();
+  console.log(header);
   const res = await fetch(fastApiUrl + apiRequest, {
     method: "POST",
     headers: header,

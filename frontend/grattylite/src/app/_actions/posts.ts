@@ -20,7 +20,7 @@ export async function getCurrentUserPosts(): Promise<
   return posts;
 }
 
-export async function getCurrentUserPostById(
+export async function getCurrentUserPostByPostId(
   postId: number
 ): Promise<FastApiPost | FastApiStatusResponse> {
   const post: FastApiPost = await fastApiGetRequest(`/posts/user/me/${postId}`);

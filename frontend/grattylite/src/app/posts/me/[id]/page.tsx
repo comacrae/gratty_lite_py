@@ -1,24 +1,11 @@
-import {
-  FastApiPost,
-  FastApiPostItem,
-  FastApiStatusResponse,
-} from "@/app/types";
-import { getCurrentUserPostById } from "@/app/_actions/posts";
-
-function isFastApiPost(obj: any): obj is FastApiPost {
-  return obj && typeof obj.owner_id === "number";
-}
-
-function convertFastApiDate(timeCreated: string) {
-  const date = new Date(Date.parse(timeCreated));
-  return {
-    date: date.getDate(),
-    month: date.getMonth() + 1,
-    year: date.getFullYear(),
-  };
-}
+"use client";
+import { FastApiPostItem } from "@/app/types";
+import EditRedirectButton from "./EditRedirectButton";
+import { useRouter } from "next/navigation";
+import { convertFastApiDate, isFastApiPost } from "@/app/_actions/util";
 
 function getFastApiPostItems(postItems: FastApiPostItem[]) {
+  const router = useRouter();
   const numItems = postItems.length;
   return postItems.map((item, index) => {
     return (
@@ -33,10 +20,22 @@ function getFastApiPostItems(postItems: FastApiPostItem[]) {
 }
 
 export default async function Page({ params }: { params: { id: number } }) {
-  const result = await getCurrentUserPostById(params?.id);
+  const res = await fetch(
+    `http://localhost:3000/api/lists/get/me/${params.id}`,
+    {
+      method: "GET",
+    }
+  );
+  const result = await res.json();
   if (isFastApiPost(result)) {
+    const date = convertFastApiDate(result.time_created);
     return (
       <main>
+        <h1 className="text-center">
+          On
+          <h2 className="inline font-bold m-x-2">{` ${date.month}/${date.day}/${date.year}`}</h2>
+          , you were grateful for
+        </h1>
         <div className="grid grid-col-1">
           {getFastApiPostItems(result.items)}
         </div>
@@ -47,6 +46,6 @@ export default async function Page({ params }: { params: { id: number } }) {
       <main>
         <p>Invalid ID</p>
       </main>
-    );
+    ); // need to display Error message if this occurs
   }
 }

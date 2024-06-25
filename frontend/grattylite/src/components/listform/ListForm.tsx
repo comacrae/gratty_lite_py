@@ -1,18 +1,24 @@
 "use client";
-import { redirect } from "next/navigation";
 import { useState } from "react";
-import { FastApiPostCreate } from "@/app/types";
+import { FastApiPostCreate, FastApiStatusResponse } from "@/app/types";
 import ListItems from "./ListItems";
 import ListInput from "./ListInput";
 import SubmitButton from "./SubmitButton";
 import PostPublicToggle from "./PostPublicToggle";
+import { isFastApiPost } from "@/app/_actions/util";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-const initialList: FastApiPostCreate = {
-  public: false,
-  post_texts: [],
-};
+interface ListFormProps {
+  initialList: FastApiPostCreate;
+  updatePostId: number | null; // id of post to be updated
+  router: AppRouterInstance;
+}
 
-export default function ListForm() {
+export default function ListForm({
+  initialList,
+  updatePostId,
+  router,
+}: ListFormProps) {
   function deleteCallback(value: string) {
     let texts = list.post_texts;
     const idxToRemove = list.post_texts.indexOf(value);
@@ -46,17 +52,29 @@ export default function ListForm() {
 
   async function submitListFunction() {
     setSubmitStatus("submitting");
-    if (validatePost(list.post_texts)) {
-      const result = await fetch("http://localhost:3000/api/lists", {
-        method: "POST",
-        body: JSON.stringify(list),
-      });
-      if (result.ok) {
-        console.log(result.json());
-      }
-      setErrorMessage("Error submitting post");
-      //somehow redirect to a server component and attempt to post, then redirect to newest list view page
+    const postAPIURL: string = updatePostId
+      ? "/api/lists/update"
+      : `/api/lists/create`;
+    const postBody = updatePostId ? { ...list, post_id: updatePostId } : list;
+    if (!validatePost(list.post_texts)) {
+      setErrorMessage(`Error submitting post: Invalid post`);
+      return;
     }
+
+    const result = await fetch(postAPIURL, {
+      method: "POST",
+      body: JSON.stringify(postBody),
+    });
+    if (result.ok) {
+      const data = await result.json();
+      if (isFastApiPost(data)) {
+        router.push(`/posts/me/${data.id}`);
+        return;
+      }
+      const errorResponse: FastApiStatusResponse = data;
+      setErrorMessage(`Error submitting post: ${errorResponse.detail}`);
+    }
+
     setSubmitStatus("");
   }
 
