@@ -1,26 +1,26 @@
 "use client";
 import { useFormStatus } from "react-dom";
 import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon";
-export function ListItem({
-  text,
-  deleteCallback,
-}: {
-  text: string;
-  deleteCallback: Function;
-}) {
+export function ListItem({ text, idx }: { text: string; idx: number }) {
   return (
     <div className="join join-horizontal flex justify-end">
       <input
         type="text"
         name="text"
+        id={text + idx}
         className="join-item flex flex-row items-center border border-x-0 border-s px-2"
         value={text}
         readOnly
       />
       <button
+        id={text + idx + "btn"}
         className="btn btn-outline btn-sm join-item px-0 hover:bg-warning"
         onClick={() => {
-          deleteCallback(text);
+          const input = document.getElementById(text + idx);
+          const btn = document.getElementById(text + idx + "btn");
+          input?.remove();
+          btn?.remove();
+          return;
         }}
       >
         <XMarkIcon className="size-4" />
@@ -39,17 +39,7 @@ export function ListItems({
   return (
     <div className="grid grid-cols-1 gap-2">
       {items.map((value: string, idx: number) => {
-        return (
-          <ListItem
-            text={value}
-            deleteCallback={() => {
-              let list = items;
-              list.splice(list.indexOf(value), 1);
-              setState({ items: list });
-            }}
-            key={idx + value}
-          />
-        );
+        return <ListItem text={value} idx={idx} key={idx + value} />;
       })}
     </div>
   );
