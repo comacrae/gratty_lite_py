@@ -10,6 +10,7 @@ const fastApiUrl = process.env.FASTAPI_URL;
 export async function fastApiGetRequest(apiRequest: string) {
   // This function is a general GET for FASTAPI url
   const session = await auth();
+  console.log("this is the session", session);
 
   if (session == null || !session?.user) redirect("/home?login-success=false");
 

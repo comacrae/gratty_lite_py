@@ -1,16 +1,9 @@
-"use client";
-import ListForm from "@/components/listform/ListForm";
-import { useRouter } from "next/navigation";
-
-export default function Page() {
-  const router = useRouter();
+"use server";
+import { AddForm } from "./AddForm";
+export default async function CreatePage() {
   return (
     <main>
-      <ListForm
-        initialList={{ public: false, post_texts: [] }}
-        updatePostId={null}
-        router={router}
-      />
+      <AddForm />
     </main>
   );
 }

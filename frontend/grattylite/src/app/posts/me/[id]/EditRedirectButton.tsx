@@ -1,18 +1,15 @@
-"use client";
+"use server";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 interface ButtonProps {
   postId: number;
-  router: AppRouterInstance;
+  //router: AppRouterInstance;
 }
-export default function EditRedirectButton({ postId, router }: ButtonProps) {
+export default async function EditRedirectButton({ postId }: ButtonProps) {
   return (
-    <button
-      className="btn btn-primary"
-      onClick={() => {
-        router.push(`posts/me/edit/${postId}`);
-      }}
-    >
-      Edit List
-    </button>
+    <Link href={`/posts/me/${postId}/edit`} passHref legacyBehavior>
+      <button className="btn btn-primary">Edit List</button>
+    </Link>
   );
 }

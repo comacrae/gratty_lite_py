@@ -1,6 +1,6 @@
 "use client";
 
-import ListForm from "@/components/listform/ListForm";
+import ListForm from "@/app/posts/me/create/_components/ListForm";
 import { FastApiPost, FastApiPostCreate, FastApiPostItem } from "@/app/types";
 import { getCurrentUserPostByPostId } from "@/app/_actions/posts";
 import {
@@ -17,14 +17,5 @@ export default async function Page({ params }: { params: { id: number } }) {
       public: list.public,
       post_texts: convertFastApiPostItemsToStrings(list.items),
     };
-    return (
-      <main>
-        <ListForm
-          initialList={initList}
-          updatePostId={params.id}
-          router={router}
-        ></ListForm>
-      </main>
-    );
   }
 }
