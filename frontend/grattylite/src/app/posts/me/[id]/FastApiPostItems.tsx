@@ -3,9 +3,7 @@ import { FastApiPostItem } from "@/app/types";
 interface FastApiPostItemProps {
   postItems: FastApiPostItem[];
 }
-export default async function FastApiPostItems({
-  postItems,
-}: FastApiPostItemProps) {
+export async function FastApiPostItems({ postItems }: FastApiPostItemProps) {
   const numItems = postItems.length;
   return postItems.map((item, index) => {
     return (

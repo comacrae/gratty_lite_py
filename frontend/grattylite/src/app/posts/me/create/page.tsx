@@ -3,7 +3,7 @@ import { AddForm } from "./AddForm";
 export default async function CreatePage() {
   return (
     <main>
-      <AddForm />
+      <AddForm initialItems={[]} />
     </main>
   );
 }
