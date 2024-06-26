@@ -63,7 +63,7 @@ def update_post(post_id:int, current_user : Annotated[schemas.User, Depends(get_
   create_post_items(post_id = db_post.id, post_texts=new_post.post_texts,db=db)
   return db_post
 
-@router.delete("/delete/{post_id}")
+@router.post("/delete/{post_id}")
 def read_posts_me(post_id:int, current_user : Annotated[schemas.User, Depends(get_current_active_user)], db :Session = Depends(database.get_db)):
   if database.posts.delete_post(db, post_id, current_user.id):
     return 

@@ -21,5 +21,11 @@ class User(UserBase):
   followers: list[UserPublic] = []
   following: list[UserPublic] = []
 
+class UserInfo(UserBase):
+  email:str
+  num_posts: int
+  followers: list[UserPublic] = []
+  following: list[UserPublic] = []
+
   class Config:
     from_attributes = True # used to be orm_mode

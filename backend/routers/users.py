@@ -17,6 +17,11 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.g
 def read_users_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)]):
   return current_user
 
+@router.get("/me/info", response_model=schemas.UserInfo)
+def read_users_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)]):
+  return schemas.UserInfo(email=current_user.email, num_posts=len(current_user.posts), followers=current_user.followers, following=current_user.following)
+
+
 @router.get("/me/id", response_model=int)
 def read_users_me(current_user : Annotated[schemas.User, Depends(get_current_active_user)]):
   return current_user.id 

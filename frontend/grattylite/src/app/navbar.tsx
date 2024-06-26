@@ -11,6 +11,7 @@ export default async function Navbar() {
   const routes: BtnToRoute[] = [
     { btnTitle: "About", routePath: "/about" },
     { btnTitle: "Profile", routePath: "/profile" },
+    { btnTitle: "My Posts", routePath: "/posts/me" },
   ];
   if (session?.user)
     routes.push({ btnTitle: "Logout", routePath: "/api/auth/signout" });

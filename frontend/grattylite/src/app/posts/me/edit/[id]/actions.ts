@@ -1,5 +1,6 @@
 "use server";
 import { updatePost } from "@/app/_actions/posts";
+import { deletePost } from "@/app/_actions/posts";
 import { isFastApiPost } from "@/app/_actions/util";
 import { redirect, RedirectType } from "next/navigation";
 import { z } from "zod";
@@ -11,4 +12,9 @@ export async function attemptUpdatePost(formData: FormData, id: number) {
   if (isFastApiPost(result)) {
     redirect(`/posts/me/${result.id}`, RedirectType.replace);
   }
+}
+
+export async function attemptDeletePost(formData: FormData, id: number) {
+  await deletePost(id);
+  redirect("/posts/me", RedirectType.replace);
 }

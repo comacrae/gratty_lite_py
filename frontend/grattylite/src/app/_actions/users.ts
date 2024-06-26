@@ -14,9 +14,14 @@ export async function getFastApiCurrentUser(): Promise<FastApiUser> {
   return user;
 }
 
-export async function getFastApiCurrentUserId() {
-  const info = await fastApiGetRequest(`/users/me/id`);
+export async function getFastApiCurrentUserInfo() {
+  const info = await fastApiGetRequest(`/users/me/info`);
   return info;
+}
+
+export async function getFastApiCurrentUserId() {
+  const id = await fastApiGetRequest(`/users/me/id`);
+  return id;
 }
 
 export async function getFastApiUserById(

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { attemptUpdatePost } from "./actions";
+import { attemptDeletePost, attemptUpdatePost } from "./actions";
 import {
   ListItems,
   SubmitButton,
@@ -31,6 +31,15 @@ export function EditForm({
         />
         <PostPublicToggle />
         <SubmitButton />
+      </form>
+      <form
+        action={(formData: FormData) => {
+          attemptDeletePost(formData, id);
+        }}
+      >
+        <button className="btn" type="submit">
+          Delete
+        </button>
       </form>
     </div>
   );

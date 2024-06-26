@@ -1,6 +1,19 @@
-import { FastApiPost, FastApiPostItem } from "../types";
+import { FastApiPost, FastApiPostItem, FastApiStatusResponse } from "../types";
 export function isFastApiPost(obj: any): obj is FastApiPost {
   return obj && typeof obj.owner_id === "number";
+}
+
+export function isFastApiStatusResponse(
+  obj: any
+): obj is FastApiStatusResponse {
+  return obj && typeof obj.success === "boolean";
+}
+
+export function isFastApiPostList(obj: any): obj is FastApiPost[] {
+  if (obj == null) return false;
+  if (obj.constructor != Array) return false;
+  if (obj.length > 0) return isFastApiPost(obj);
+  return true;
 }
 
 export function convertFastApiDate(timeCreated: string) {

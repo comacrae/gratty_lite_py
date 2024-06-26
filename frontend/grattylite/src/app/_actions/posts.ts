@@ -2,6 +2,7 @@
 import {
   fastApiGetRequest,
   fastApiPostJSONRequest,
+  fastApiPostRequest,
   fastApiPutJSONRequest,
   fastApiDeleteRequest,
   getFastApiStatusObject,
@@ -72,6 +73,6 @@ export async function updatePost(
 export async function deletePost(
   postId: number
 ): Promise<FastApiStatusResponse> {
-  const status = await fastApiDeleteRequest(`/posts/delete/${postId}`);
+  const status = await fastApiPostJSONRequest(`/posts/delete/${postId}`, {});
   return status;
 }

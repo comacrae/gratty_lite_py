@@ -1,7 +1,16 @@
-export default function ProfilePage() {
+import Link from "next/link";
+import { getFastApiCurrentUserInfo } from "../_actions/users";
+
+async function FollowList({ userList }: { userList: Object[] }) {
+  return;
+}
+export default async function ProfilePage() {
+  const result = await getFastApiCurrentUserInfo();
+  if (!result) throw new Error("Can't get user");
   return (
-    <body>
-      <h1 className="bg-inherit">Profile</h1>
-    </body>
+    <main>
+      <h1>{result.email}</h1>
+      <h1>Number of posts: {result.num_posts}</h1>
+    </main>
   );
 }
