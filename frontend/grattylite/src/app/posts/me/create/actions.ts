@@ -2,6 +2,7 @@
 import { createPost } from "@/app/_actions/posts";
 import { isFastApiPost } from "@/app/_actions/util";
 import { revalidatePath } from "next/cache";
+import { redirect, RedirectType } from "next/navigation";
 import { z } from "zod";
 
 export async function attemptCreatePost(formData: FormData) {
@@ -11,7 +12,7 @@ export async function attemptCreatePost(formData: FormData) {
   try {
     const result = await createPost(isPublic, postItems);
     if (isFastApiPost(result)) {
-      console.log(result);
+      redirect(`/posts/me/${result.id}`, RedirectType.replace);
     }
   } catch {
     throw new Error("Unable to create post");

@@ -4,13 +4,16 @@ import {
   isFastApiPost,
   convertFastApiPostItemsToStrings,
 } from "@/app/_actions/util";
-import { AddForm } from "../../create/AddForm";
+import { EditForm } from "./EditForm";
 
 export default async function EditPage({ params }: { params: { id: number } }) {
   const results = await getCurrentUserPostByPostId(params.id);
   if (isFastApiPost(results)) {
     return (
-      <AddForm initialItems={convertFastApiPostItemsToStrings(results.items)} />
+      <EditForm
+        initialItems={convertFastApiPostItemsToStrings(results.items)}
+        id={params.id}
+      />
     );
   }
   return <main>Invalid</main>;
